@@ -1,10 +1,12 @@
 const asyncHandler = require('express-async-handler')
+const Test = require('../models/testModel')
 
 // @desc Get Goals
 // @route GET api/goals
 // @access Private
 const getGoal = asyncHandler(async (req, res) => {
-    res.status(200).json({ message: `GET Goals` })
+    const tests = await Test.find()
+    res.status(200).json(tests)
 })
 
 // @desc Set Goals
@@ -15,21 +17,39 @@ const setGoal = asyncHandler(async (req, res) => {
         res.status(400)
         throw new Error(`Please add text field`)
     }
-    res.status(200).json({ messaege: 'SET goals'})
+    const test = await Test.create({
+        text: req.body.text
+    })
+    res.status(200).json(test)
 })
 
 // @desc Update Goals
 // @route PUT api/goals/:id
 // @access Private
 const updateGoal = asyncHandler(async (req, res) => {
-    res.status(200).json({ messaege: `UPDATE goals ${req.params.id}` })
+    const test = await Test.findById(req.params.id)
+    if(!test){
+        res.status(400)
+        throw new Error('Test not found')
+    }
+    const updatedTest = await Test.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+    })
+
+    res.status(200).json(updatedTest)
 })
 
 // @desc Delete Goals
 // @route DELETE api/goals
 // @access Private
 const deleteGoal = asyncHandler(async (req, res) => {
-    res.status(200).json({ messaege: `DELETE goals ${req.params.id}`})
+    const test = await Test.findById(req.params.id)
+    if(!test){
+        res.status(400)
+        throw new Error('Test not found')
+    }
+    await test.remove()
+    res.status(200).json({id: req.params.id})
 })
 
 module.exports = {
