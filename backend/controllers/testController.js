@@ -32,9 +32,11 @@ const updateGoal = asyncHandler(async (req, res) => {
         res.status(400)
         throw new Error('Test not found')
     }
-    const updatedTest = await Test.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-    })
+    const updatedTest = await Test.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {new: true}
+        )
 
     res.status(200).json(updatedTest)
 })
